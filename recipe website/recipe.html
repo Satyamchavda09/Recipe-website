@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles for recipe page */
+        .recipe-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .recipe-header {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .recipe-main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recipe-title {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        
+        .recipe-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .recipe-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .ingredients, .instructions {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ingredients h3, .instructions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+        
+        .ingredients ul {
+            list-style-type: none;
+        }
+        
+        .ingredients li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            padding: 10px 0;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .recipe-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .recipe-main-image {
+                height: 300px;
+            }
+            
+            .recipe-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="recipe-page">
+        <div class="recipe-header">
+            <img id="recipe-image" class="recipe-main-image" src="" alt="">
+            <div>
+                <h1 id="recipe-title" class="recipe-title"></h1>
+                <div class="recipe-meta">
+                    <span id="recipe-time"></span>
+                    <span id="recipe-difficulty"></span>
+                </div>
+                <p id="recipe-description"></p>
+            </div>
+        </div>
+        
+        <div class="recipe-content">
+            <div class="ingredients">
+                <h3>Ingredients</h3>
+                <ul id="ingredients-list">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+            </div>
+            
+            <div class="instructions">
+                <h3>Instructions</h3>
+                <ol id="instructions-list">
+                    <!-- Will be populated by JavaScript -->
+                </ol>
+            </div>
+        </div>
+        
+        <a href="index.html" class="back-button">← Back to Recipes</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get recipe data from localStorage
+            const recipeData = JSON.parse(localStorage.getItem('currentRecipe'));
+            
+            if (recipeData) {
+                // Populate the page with recipe data
+                document.getElementById('recipe-image').src = recipeData.image;
+                document.getElementById('recipe-image').alt = recipeData.title;
+                document.getElementById('recipe-title').textContent = recipeData.title;
+                document.getElementById('recipe-time').textContent = `⏱ ${recipeData.time}`;
+                document.getElementById('recipe-difficulty').textContent = `🧑‍🍳 ${recipeData.difficulty}`;
+                document.getElementById('recipe-description').textContent = recipeData.description;
+                
+                // Generate sample ingredients and instructions based on recipe
+                generateIngredients(recipeData.title);
+                generateInstructions(recipeData.title);
+            } else {
+                // If no recipe data, redirect back to main page
+                window.location.href = 'index.html';
+            }
+            
+            function generateIngredients(recipeTitle) {
+                const ingredientsList = document.getElementById('ingredients-list');
+                const ingredients = getSampleIngredients(recipeTitle);
+                
+                ingredients.forEach(ingredient => {
+                    const li = document.createElement('li');
+                    li.textContent = ingredient;
+                    ingredientsList.appendChild(li);
+                });
+            }
+            
+            function generateInstructions(recipeTitle) {
+                const instructionsList = document.getElementById('instructions-list');
+                const instructions = getSampleInstructions(recipeTitle);
+                
+                instructions.forEach(instruction => {
+                    const li = document.createElement('li');
+                    li.textContent = instruction;
+                    instructionsList.appendChild(li);
+                });
+            }
+            
+            function getSampleIngredients(recipeTitle) {
+                // This would normally come from your database
+                // Here we just generate sample ingredients based on recipe title
+                if (recipeTitle.includes('Avocado Toast')) {
+                    return [
+                        '2 slices sourdough bread',
+                        '1 ripe avocado',
+                        '1 tbsp olive oil',
+                        '1/2 tsp chili flakes',
+                        'Salt and pepper to taste',
+                        '1/2 lemon (optional)'
+                    ];
+                } else if (recipeTitle.includes('Vegetable Salad')) {
+                    return [
+                        '2 cups mixed greens',
+                        '1 cucumber, sliced',
+                        '1 bell pepper, diced',
+                        '1 cup cherry tomatoes, halved',
+                        '1/4 red onion, thinly sliced',
+                        '2 tbsp olive oil',
+                        '1 tbsp lemon juice',
+                        'Salt and pepper to taste'
+                    ];
+                } else {
+                    // Default ingredients for other recipes
+                    return [
+                        'Ingredient 1',
+                        'Ingredient 2',
+                        'Ingredient 3',
+                        'Ingredient 4',
+                        'Ingredient 5'
+                    ];
+                }
+            }
+            
+            function getSampleInstructions(recipeTitle) {
+                // This would normally come from your database
+                // Here we just generate sample instructions based on recipe title
+                if (recipeTitle.includes('Avocado Toast')) {
+                    return [
+                        'Toast the sourdough bread until golden and crisp.',
+                        'Cut the avocado in half, remove the pit, and scoop the flesh into a bowl.',
+                        'Mash the avocado with a fork and season with salt, pepper, and a squeeze of lemon juice if using.',
+                        'Spread the mashed avocado evenly on the toasted bread.',
+                        'Drizzle with olive oil and sprinkle with chili flakes.',
+                        'Serve immediately.'
+                    ];
+                } else if (recipeTitle.includes('Vegetable Salad')) {
+                    return [
+                        'Wash and prepare all vegetables.',
+                        'In a large bowl, combine the mixed greens, cucumber, bell pepper, cherry tomatoes, and red onion.',
+                        'In a small bowl, whisk together the olive oil, lemon juice, salt, and pepper.',
+                        'Pour the dressing over the salad and toss gently to combine.',
+                        'Serve immediately or refrigerate for up to 2 hours before serving.'
+                    ];
+                } else {
+                    // Default instructions for other recipes
+                    return [
+                        'Step 1: Prepare all ingredients',
+                        'Step 2: Follow the cooking process',
+                        'Step 3: Cook for the recommended time',
+                        'Step 4: Check for doneness',
+                        'Step 5: Serve and enjoy!'
+                    ];
+                }
+            }
+        });
+    </script>
+</body>
+</html>
